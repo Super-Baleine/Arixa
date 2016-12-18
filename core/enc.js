@@ -54,11 +54,11 @@ mode.ocb2.encrypt = function(pass, plt){
 
 
 mode.gcm.decrypt = function(passwd, t){
-	var split = t.split("/"); //get the parameters
-	var c = sjcl.codec.hex.toBits(split[0]);//...
-	var s = sjcl.codec.hex.toBits(split[1]);//...
-	var a = sjcl.codec.hex.toBits(split[2]);//...
-	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+	var split = t.split(":"); //get the parameters
+	var c = sjcl.codec.base64.toBits(split[0]);//...
+	var s = sjcl.codec.base64.toBits(split[1]);//...
+	var a = sjcl.codec.base64.toBits(split[2]);//...
+	var i = sjcl.codec.base64.toBits(split[3]);//up to there
 
 	var key = derivation(s, passwd); //we need the key to decrypt the ct
 
@@ -70,11 +70,11 @@ mode.gcm.decrypt = function(passwd, t){
 }
 
 mode.ccm.decrypt = function(passwd, t){
-	var split = t.split("/"); //get the parameters
-	var c = sjcl.codec.hex.toBits(split[0]);//...
-	var s = sjcl.codec.hex.toBits(split[1]);//...
-	var a = sjcl.codec.hex.toBits(split[2]);//...
-	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+	var split = t.split(":"); //get the parameters
+	var c = sjcl.codec.base64.toBits(split[0]);//...
+	var s = sjcl.codec.base64.toBits(split[1]);//...
+	var a = sjcl.codec.base64.toBits(split[2]);//...
+	var i = sjcl.codec.base64.toBits(split[3]);//up to there
 
 	var key = derivation(s, passwd); //we need the key to decrypt the ct
 
@@ -86,11 +86,11 @@ mode.ccm.decrypt = function(passwd, t){
 }
 
 mode.ocb2.decrypt = function(passwd, t){
-	var split = t.split("/"); //get the parameters
-	var c = sjcl.codec.hex.toBits(split[0]);//...
-	var s = sjcl.codec.hex.toBits(split[1]);//...
-	var a = sjcl.codec.hex.toBits(split[2]);//...
-	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+	var split = t.split(":"); //get the parameters
+	var c = sjcl.codec.base64.toBits(split[0]);//...
+	var s = sjcl.codec.base64.toBits(split[1]);//...
+	var a = sjcl.codec.base64.toBits(split[2]);//...
+	var i = sjcl.codec.base64.toBits(split[3]);//up to there
 
 	var key = derivation(s, passwd); //we need the key to decrypt the ct
 
@@ -103,11 +103,11 @@ mode.ocb2.decrypt = function(passwd, t){
 
 
 var packet = function(c, s, a, i){
-	var c = sjcl.codec.hex.fromBits(c); //ciphered text
-	var s = sjcl.codec.hex.fromBits(s); //salt
-	var a = sjcl.codec.hex.fromBits(a); //authentification data
-	var i = sjcl.codec.hex.fromBits(i); //initialization vector
-	var packaged = c+"/"+s+"/"+a+"/"+i; //join it
+	var c = sjcl.codec.base64.fromBits(c); //ciphered text
+	var s = sjcl.codec.base64.fromBits(s); //salt
+	var a = sjcl.codec.base64.fromBits(a); //authentification data
+	var i = sjcl.codec.base64.fromBits(i); //initialization vector
+	var packaged = c+":"+s+":"+a+":"+i; //join it
 	return packaged;
 }
 
