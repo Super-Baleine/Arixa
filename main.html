@@ -2,13 +2,17 @@
 <meta charset="utf-8">
 <script src='libs/sjcl.js'></script>
 <script src='core/enc.js'></script>
+<script src='core/unenc.js'></script>
 <script>
 var pass = prompt("Write var pass: ");
 var plt = prompt("Write var plt: ");
 
-var text = gcm(pass, plt);
+var text = enc_gcm(pass, plt);
 
-alert(text)
+console.log("Encrypted!\n\n"+text)
+
+var text = unenc_gcm(pass,text)
+console.log("\n\n"+text)
 
 </script>
 

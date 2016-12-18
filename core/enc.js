@@ -1,12 +1,14 @@
-var gcm = function(pass, plt){
+var enc_gcm = function(pass, plt){
 	var sALT = sjcl.random.randomWords(2);
 
 	var key = derivation(sALT, pass);
 	var plt = str(plt);
 
 	var initvector = sjcl.random.randomWords(4);
+	console.log(initvector);
 
 	var a = sjcl.random.randomWords(1);
+	console.log(a)
 
 	var enc = new sjcl.cipher.aes(key);
 	var ciphered = sjcl.mode.gcm.encrypt(enc, plt, initvector, a, 128)
@@ -15,11 +17,11 @@ var gcm = function(pass, plt){
 }
 
 var packet = function(c, s, a, i){
-	var c = sjcl.codec.base64.fromBits(c);
-	var s = sjcl.codec.base64.fromBits(s);
-	var a = sjcl.codec.base64.fromBits(a);
-	var i = sjcl.codec.base64.fromBits(i);
-	var packaged = c+s+a+i;
+	var c = sjcl.codec.hex.fromBits(c); //ciphered text
+	var s = sjcl.codec.hex.fromBits(s); //salt
+	var a = sjcl.codec.hex.fromBits(a); //authentification data
+	var i = sjcl.codec.hex.fromBits(i); //initialization vector
+	var packaged = c+":"+s+":"+a+":"+i;
 	return packaged;
 }
 
