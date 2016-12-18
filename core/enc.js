@@ -1,5 +1,5 @@
 var enc_gcm = function(pass, plt){
-	var sALT = sjcl.random.randomWords(2); //2*4=16 bytes
+	var sALT = sjcl.random.randomWords(2); //2*4=8 bytes
 
 	var key = derivation(sALT, pass); //key derivation process
 	var plt = str(plt); //turn the string into a bytes array
