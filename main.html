@@ -7,11 +7,11 @@
 var pass = prompt("Write var pass: ");
 var plt = prompt("Write var plt: ");
 
-var text = enc_gcm(pass, plt);
+var text = mode.gcm.encrypt(pass, plt);
 
 alert("This is the ciphered text: \n\n"+text)
 
-var text = unenc_gcm(pass,text)
+var text = mode.gcm.decrypt(pass,text)
 alert("This is the plaintext: \n\n"+text)
 
 </script>

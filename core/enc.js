@@ -1,4 +1,9 @@
-var enc_gcm = function(pass, plt){
+var mode = {};
+mode.gcm = {};
+mode.ccm = {};
+mode.ocb2 = {};
+
+mode.gcm.encrypt = function(pass, plt){
 	var sALT = sjcl.random.randomWords(2); //2*4=8 bytes
 
 	var key = derivation(sALT, pass); //key derivation process
@@ -13,6 +18,89 @@ var enc_gcm = function(pass, plt){
 
 	return packet(ciphered, sALT, a, initvector); //return a packet with the ct and its parameters
 }
+
+mode.ccm.encrypt = function(pass, plt){
+	var sALT = sjcl.random.randomWords(2); //2*4=8 bytes
+
+	var key = derivation(sALT, pass); //key derivation process
+	var plt = str(plt); //turn the string into a bytes array
+
+	var initvector = sjcl.random.randomWords(4); //4*4=16 bytes
+
+	var a = sjcl.random.randomWords(1); //authentification data 4 bytes
+
+	var enc = new sjcl.cipher.aes(key);
+	var ciphered = sjcl.mode.ccm.encrypt(enc, plt, initvector, a, 128) //encrypt it!
+
+	return packet(ciphered, sALT, a, initvector); //return a packet with the ct and its parameters
+}
+
+mode.ocb2.encrypt = function(pass, plt){
+	var sALT = sjcl.random.randomWords(2); //2*4=8 bytes
+
+	var key = derivation(sALT, pass); //key derivation process
+	var plt = str(plt); //turn the string into a bytes array
+
+	var initvector = sjcl.random.randomWords(4); //4*4=16 bytes
+
+	var a = sjcl.random.randomWords(1); //authentification data 4 bytes
+
+	var enc = new sjcl.cipher.aes(key);
+	var ciphered = sjcl.mode.ocb2.encrypt(enc, plt, initvector, a, 128) //encrypt it!
+
+	return packet(ciphered, sALT, a, initvector); //return a packet with the ct and its parameters
+}
+
+
+
+mode.gcm.decrypt = function(passwd, t){
+	var split = t.split("/"); //get the parameters
+	var c = sjcl.codec.hex.toBits(split[0]);//...
+	var s = sjcl.codec.hex.toBits(split[1]);//...
+	var a = sjcl.codec.hex.toBits(split[2]);//...
+	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+
+	var key = derivation(s, passwd); //we need the key to decrypt the ct
+
+	var enc = new sjcl.cipher.aes(key);
+	var plt = sjcl.mode.gcm.decrypt(enc, c, i, a, 128); //decrypt it!
+	var plt = sjcl.codec.utf8String.fromBits(plt); //turn the bytes array into a utf8 string
+
+	return plt; //return the string (plaintext)
+}
+
+mode.ccm.decrypt = function(passwd, t){
+	var split = t.split("/"); //get the parameters
+	var c = sjcl.codec.hex.toBits(split[0]);//...
+	var s = sjcl.codec.hex.toBits(split[1]);//...
+	var a = sjcl.codec.hex.toBits(split[2]);//...
+	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+
+	var key = derivation(s, passwd); //we need the key to decrypt the ct
+
+	var enc = new sjcl.cipher.aes(key);
+	var plt = sjcl.mode.ccm.decrypt(enc, c, i, a, 128); //decrypt it!
+	var plt = sjcl.codec.utf8String.fromBits(plt); //turn the bytes array into a utf8 string
+
+	return plt; //return the string (plaintext)
+}
+
+mode.ocb2.decrypt = function(passwd, t){
+	var split = t.split("/"); //get the parameters
+	var c = sjcl.codec.hex.toBits(split[0]);//...
+	var s = sjcl.codec.hex.toBits(split[1]);//...
+	var a = sjcl.codec.hex.toBits(split[2]);//...
+	var i = sjcl.codec.hex.toBits(split[3]);//up to there
+
+	var key = derivation(s, passwd); //we need the key to decrypt the ct
+
+	var enc = new sjcl.cipher.aes(key);
+	var plt = sjcl.mode.ocb2.decrypt(enc, c, i, a, 128); //decrypt it!
+	var plt = sjcl.codec.utf8String.fromBits(plt); //turn the bytes array into a utf8 string
+
+	return plt; //return the string (plaintext)
+}
+
 
 var packet = function(c, s, a, i){
 	var c = sjcl.codec.hex.fromBits(c); //ciphered text
