@@ -19,7 +19,7 @@ var packet = function(c, s, a, i){
 	var s = sjcl.codec.hex.fromBits(s); //salt
 	var a = sjcl.codec.hex.fromBits(a); //authentification data
 	var i = sjcl.codec.hex.fromBits(i); //initialization vector
-	var packaged = c+":"+s+":"+a+":"+i; //join it
+	var packaged = c+"/"+s+"/"+a+"/"+i; //join it
 	return packaged;
 }
 
